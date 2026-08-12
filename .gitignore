@@ -1,0 +1,13 @@
+# Node / frontend
+node_modules/
+dist/
+
+# Go / air
+tmp/
+
+# Env
+.env
+.env.local
+
+# Logs
+*.log
