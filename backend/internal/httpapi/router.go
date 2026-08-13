@@ -21,7 +21,7 @@ func NewRouter(cfg config.Config, pool *pgxpool.Pool) *gin.Engine {
 
 	api := r.Group("/api", middleware.Session())
 	{
-		_ = api
+		api.GET("/health", handlers.APIHealth(pool))
 	}
 
 	r.Static("/static", cfg.StaticDir)
