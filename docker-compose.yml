@@ -15,6 +15,24 @@ services:
       timeout: 3s
       retries: 10
 
+  migrate:
+    image: migrate/migrate:v4.17.1
+    depends_on:
+      db:
+        condition: service_healthy
+    entrypoint:
+      - sh
+      - -c
+      - |
+        migrate -path=/migrations -database "postgres://${POSTGRES_USER:-physiq}:${POSTGRES_PASSWORD:-physiq}@db:5432/${POSTGRES_DB:-physiq}?sslmode=disable" up
+    environment:
+      POSTGRES_USER: physiq
+      POSTGRES_PASSWORD: physiq
+      POSTGRES_DB: physiq
+    volumes:
+      - ./backend/migrations:/migrations
+    restart: "no"
+
   backend:
     build:
       context: ./backend
@@ -28,8 +46,8 @@ services:
       - ./backend:/app
       - /app/tmp
     depends_on:
-      db:
-        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
 
   frontend:
     build:

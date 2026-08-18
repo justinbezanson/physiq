@@ -19,6 +19,11 @@ func NewRouter(cfg config.Config, pool *pgxpool.Pool) *gin.Engine {
 	r.GET("/health", handlers.Health(pool))
 	r.GET("/", handlers.Landing())
 
+	auth := r.Group("/api/auth")
+	{
+		auth.POST("/register", handlers.Register(pool))
+	}
+
 	api := r.Group("/api", middleware.Session())
 	{
 		api.GET("/health", handlers.APIHealth(pool))

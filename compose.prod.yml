@@ -15,7 +15,7 @@ services:
       retries: 10
 
   migrate:
-    image: migrate/migrate:v4
+    image: migrate/migrate:v4.17.1
     depends_on:
       db:
         condition: service_healthy
