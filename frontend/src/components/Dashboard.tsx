@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { Link } from "react-router";
 import { useDashboardStore } from "../stores/dashboard";
 
 function Dashboard() {
@@ -15,6 +16,9 @@ function Dashboard() {
       {loading && <p>Loading…</p>}
       {error && <p className="text-red-500">{error}</p>}
       {status && <p>API status: {status}</p>}
+      <Link to="/register" className="text-primary underline underline-offset-4">
+        Create an account
+      </Link>
     </main>
   );
 }
