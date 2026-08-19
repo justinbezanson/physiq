@@ -13,6 +13,7 @@ type Config struct {
 	DBPass    string
 	DBName    string
 	StaticDir string
+	AppMode   string
 }
 
 func Load() Config {
@@ -24,6 +25,7 @@ func Load() Config {
 		DBPass:    getenv("DB_PASSWORD", "physiq"),
 		DBName:    getenv("DB_NAME", "physiq"),
 		StaticDir: getenv("STATIC_DIR", "static"),
+		AppMode:   getenv("APP_MODE", "DEV"),
 	}
 }
 

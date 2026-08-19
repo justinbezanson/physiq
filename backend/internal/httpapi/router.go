@@ -13,7 +13,7 @@ import (
 	"physiq/backend/internal/middleware"
 )
 
-func NewRouter(cfg config.Config, pool *pgxpool.Pool) *gin.Engine {
+func NewRouter(cfg *config.Config, pool *pgxpool.Pool) *gin.Engine {
 	r := gin.Default()
 
 	r.GET("/health", handlers.Health(pool))
@@ -21,7 +21,7 @@ func NewRouter(cfg config.Config, pool *pgxpool.Pool) *gin.Engine {
 
 	auth := r.Group("/api/auth")
 	{
-		auth.POST("/register", handlers.Register(pool))
+		auth.POST("/register", handlers.Register(pool, cfg))
 	}
 
 	api := r.Group("/api", middleware.Session())

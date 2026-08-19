@@ -3,6 +3,7 @@ package handlers
 import (
 	"errors"
 	"net/http"
+	"physiq/backend/internal/config"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -12,11 +13,12 @@ import (
 )
 
 type registerRequest struct {
+	Name     string `json:"name"`
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
-func Register(pool *pgxpool.Pool) gin.HandlerFunc {
+func Register(pool *pgxpool.Pool, cfg *config.Config) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req registerRequest
 		if err := c.ShouldBindJSON(&req); err != nil {
@@ -43,8 +45,8 @@ func Register(pool *pgxpool.Pool) gin.HandlerFunc {
 
 		var id int64
 		err = pool.QueryRow(c.Request.Context(),
-			`INSERT INTO users (email, password_hash) VALUES ($1, $2) RETURNING id`,
-			req.Email, string(hash),
+			`INSERT INTO users (name, email, password_hash) VALUES ($1, $2, $3) RETURNING id`,
+			req.Name, req.Email, string(hash),
 		).Scan(&id)
 
 		if err != nil {
@@ -53,10 +55,15 @@ func Register(pool *pgxpool.Pool) gin.HandlerFunc {
 				c.JSON(http.StatusConflict, gin.H{"error": "email already registered"})
 				return
 			}
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "internal error"})
-			return
+			if cfg.AppMode == "DEV" {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			} else {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not register user"})
+				return
+			}
 		}
 
-		c.JSON(http.StatusCreated, gin.H{"id": id, "email": req.Email})
+		c.JSON(http.StatusCreated, gin.H{"id": id, "email": req.Email, "name": req.Name})
 	}
 }

@@ -21,7 +21,7 @@ func main() {
 
 	srv := &http.Server{
 		Addr:    ":" + cfg.Port,
-		Handler: httpapi.NewRouter(cfg, pool),
+		Handler: httpapi.NewRouter(&cfg, pool),
 	}
 
 	log.Printf("physiq backend listening on :%s", cfg.Port)
