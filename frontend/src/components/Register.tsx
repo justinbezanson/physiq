@@ -39,7 +39,7 @@ function Register() {
         return;
       }
 
-      navigate("/");
+      navigate("/login");
     } catch {
       setError("Could not reach the server");
     } finally {
@@ -98,7 +98,7 @@ function Register() {
           </Button>
           <p className="text-sm text-muted-foreground">
             Already have an account?{" "}
-            <Link to="/" className="text-primary underline underline-offset-4">
+            <Link to="/login" className="text-primary underline underline-offset-4">
               Log in
             </Link>
           </p>

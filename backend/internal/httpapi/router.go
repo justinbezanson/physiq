@@ -22,11 +22,18 @@ func NewRouter(cfg *config.Config, pool *pgxpool.Pool) *gin.Engine {
 	auth := r.Group("/api/auth")
 	{
 		auth.POST("/register", handlers.Register(pool, cfg))
+		auth.POST("/login", handlers.Login(pool, cfg))
+		auth.POST("/logout", handlers.Logout(pool, cfg))
 	}
 
-	api := r.Group("/api", middleware.Session())
+	api := r.Group("/api", middleware.Session(pool))
 	{
 		api.GET("/health", handlers.APIHealth(pool))
+	}
+
+	protected := r.Group("/api", middleware.Session(pool), middleware.RequireAuth())
+	{
+		protected.GET("/me", handlers.Me(pool))
 	}
 
 	r.Static("/static", cfg.StaticDir)
